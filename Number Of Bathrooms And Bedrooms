@@ -1,0 +1,14 @@
+Find the average number of bathrooms and bedrooms for each city’s property types. 
+Output the result along with the city name and the property type.
+
+DataFrame: airbnb_search_details
+
+# Import your libraries
+import pandas as pd
+
+# Start writing code
+airbnb_key_details = airbnb_search_details[['property_type','city','bedrooms','bathrooms']]
+
+property_averages = airbnb_key_details.groupby(['city','property_type']).mean().reset_index()
+
+property_averages
