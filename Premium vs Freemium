@@ -1,0 +1,23 @@
+Find the total number of downloads for paying and non-paying users by date.
+Include only records where non-paying customers have more downloads than paying customers.
+The output should be sorted by earliest date first and contain 3 columns date, non-paying downloads, paying downloads.
+
+DataFrames: ms_user_dimension, ms_acc_dimension, ms_download_facts
+
+# Import your libraries
+import pandas as pd
+
+# Start writing code
+ms_user_dimension.head()
+df_user = ms_user_dimension.merge(ms_acc_dimension, on='acc_id')
+df_all = df_user.merge(ms_download_facts, on='user_id')
+df_all['paid'] = df_all['downloads']
+df_all['unpaid'] = df_all['downloads']
+
+df_all.loc[df_all['paying_customer']=='no','paid'] = 0
+df_all.loc[df_all['paying_customer']=='yes','unpaid'] = 0
+
+daily_values = df_all.groupby('date').sum().reset_index()[['date','paid','unpaid']]
+
+final_result = daily_values[daily_values['paid'] < daily_values['unpaid']]
+final_result
