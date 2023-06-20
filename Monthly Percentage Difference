@@ -1,0 +1,29 @@
+Given a table of purchases by date, calculate the month-over-month percentage change in revenue. 
+The output should include the year-month date (YYYY-MM) and percentage change, rounded to the 2nd decimal point, 
+and sorted from the beginning of the year to the end of the year.
+The percentage change column will be populated from the 2nd month forward and can be calculated as ((this month's revenue - last month's revenue) / last month's revenue)*100.
+
+DataFrame: sf_transactions
+
+# Import your libraries
+import pandas as pd
+
+# Start writing code
+#create month column, group by the month, sum revenue
+#sort monthd in ascending order
+#take difference in revenue
+sf_transactions['month']= sf_transactions['created_at'].dt.month
+dates_formatted = sf_transactions['created_at'].dt.strftime('%Y-%m')
+
+sf_transactions['date'] = dates_formatted
+
+monthly_revenue = sf_transactions.groupby(['date']).sum().reset_index()[['date', 'value']]
+
+monthly_revenue['value_difference'] = monthly_revenue['value'].diff()
+monthly_revenue['last_month_revenue'] = monthly_revenue['value'] - monthly_revenue['value_difference']
+
+monthly_revenue['pct_change'] = (monthly_revenue['value_difference']/monthly_revenue['last_month_revenue'])*100
+
+monthly_revenue['pct_change'] = monthly_revenue['pct_change'].round(2)
+
+monthly_revenue[['date','pct_change']]
